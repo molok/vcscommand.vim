@@ -190,7 +190,7 @@ endfunction
 function! s:hgFunctions.GetBufferInfo()
 	let originalBuffer = VCSCommandGetOriginalBuffer(bufnr('%'))
 	let fileName = bufname(originalBuffer)
-	let statusText = s:VCSCommandUtility.system(s:Executable() . ' status -- "' . fileName . '"')
+	let statusText = s:VCSCommandUtility.system(s:Executable() . ' status -A -- "' . fileName . '"')
 	if(v:shell_error)
 		return []
 	endif
