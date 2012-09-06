@@ -206,21 +206,29 @@ function! s:hgFunctions.GetBufferInfo()
 	let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
 	let repository = matchlist(logText, '^changeset:\s\+\(\S\+\)\n')[1]
 
+    if statusText =~ '^C'
+        let displayStatus = 'Clean'
+    elseif statusText =~ '^M'
+        let displayStatus = 'Modified'
+    elseif statusText =~ '^A'
+        let displayStatus = 'Added'
+    elseif statusText =~ '^R'
+        let displayStatus = 'Removed'
+    elseif statusText =~ '^!'
+        let displayStatus = 'Missing'
+    elseif statusText =~ '^?'
+        let displayStatus = 'Not Tracked'
+    elseif statusText =~ '^I'
+        let displayStatus = 'Ignored'
+    else
+        let displayStatus = ''
+    endif
+
 	if revision == ''
 		" Error
 		return ['Unknown']
-	elseif statusText =~ '^A'
-		return ['New', 'New']
 	else
-        if statusText =~ '^C'
-            let displayStatus = 'Clean'
-        elseif statusText =~ '^M'
-            let displayStatus = 'Modified'
-        else
-            let displayStatus = ''
-        endif
-
-		return [displayStatus, revision, repository]
+		return [displayStatus, repository]
 	endif
 endfunction
 
