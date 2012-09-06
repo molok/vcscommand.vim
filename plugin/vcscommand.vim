@@ -672,11 +672,6 @@ endfunction
 " Attempts to set the b:VCSCommandBufferInfo variable
 
 function! s:SetupBuffer()
-	if (exists('b:VCSCommandBufferSetup') && b:VCSCommandBufferSetup)
-		" This buffer is already set up.
-		return
-	endif
-
 	if !isdirectory(@%) && (strlen(&buftype) > 0 || !filereadable(@%))
 		" No special status for special buffers other than directory buffers.
 		return
@@ -1342,7 +1337,8 @@ function! VCSCommandEnableBufferSetup()
 	let g:VCSCommandEnableBufferSetup = 1
 	augroup VCSCommandPlugin
 		au!
-		au BufEnter * call s:SetupBuffer()
+		au BufRead * call s:SetupBuffer()
+        au BufWritePost * call s:SetupBuffer()
 	augroup END
 
 	" Only auto-load if the plugin is fully loaded.  This gives other plugins a
