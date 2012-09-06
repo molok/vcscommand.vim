@@ -214,26 +214,28 @@ function! s:hgFunctions.GetBufferInfo()
         let displayStatus = ''
     endif
 
-	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' log -l 1 ' .  fnamemodify(resolve(fileName), ':p:h'))
-	let last_rev_repo = matchlist(parentsText, '^changeset:\s\+\(\d\+\):\S')[1]
+    return [displayStatus]
 
-    if displayStatus == 'Clean' || displayStatus == 'Modified' || displayStatus == 'Removed' || displayStatus == 'Missing'
-        let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
-        let last_rev_file_modif = matchlist(logText, '^changeset:\s\+\(\d\+\):\S')[1]
-    else
-        let last_rev_file_modif = ''
-    endif
+	"let parentsText = s:VCSCommandUtility.system(s:Executable() . ' log -l 1 ' .  fnamemodify(resolve(fileName), ':p:h'))
+	"let last_rev_repo = matchlist(parentsText, '^changeset:\s\+\(\d\+\):\S')[1]
+
+    "if displayStatus == 'Clean' || displayStatus == 'Modified' || displayStatus == 'Removed' || displayStatus == 'Missing'
+        "let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
+        "let last_rev_file_modif = matchlist(logText, '^changeset:\s\+\(\d\+\):\S')[1]
+    "else
+        "let last_rev_file_modif = ''
+    "endif
 
 
-	if last_rev_repo == '' || last_rev_file_modif == ''
-		return [displayStatus]
-	else
-        if last_rev_file_modif == last_rev_repo
-            return [displayStatus, last_rev_file_modif]
-        else
-            return [displayStatus, last_rev_file_modif, last_rev_repo]
-        endif
-	endif
+	"if last_rev_repo == '' || last_rev_file_modif == ''
+		"return [displayStatus]
+	"else
+        "if last_rev_file_modif == last_rev_repo
+            "return [displayStatus, last_rev_file_modif]
+        "else
+            "return [displayStatus, last_rev_file_modif, last_rev_repo]
+        "endif
+	"endif
 endfunction
 " Function: s:hgFunctions.Log(argList) {{{2
 function! s:hgFunctions.Log(argList)
