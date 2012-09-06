@@ -212,7 +212,13 @@ function! s:hgFunctions.GetBufferInfo()
 	elseif statusText =~ '^A'
 		return ['New', 'New']
 	else
-		return [revision, repository]
+        if statusText =~ '^C'
+            displayStatus = 'Clean'
+        elseif statusText =~ '^M'
+            displayStatus = 'Modified'
+        endif
+
+		return [displayStatus, revision, repository]
 	endif
 endfunction
 
