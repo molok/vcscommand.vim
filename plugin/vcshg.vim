@@ -196,16 +196,6 @@ function! s:hgFunctions.GetBufferInfo()
 	endif
 
 	" File not under HG control.
-	if statusText =~ '^?'
-		return ['Unknown']
-	endif
-
-	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' parents -- "' . fileName . '"')
-	let revision = matchlist(parentsText, '^changeset:\s\+\(\S\+\)\n')[1]
-
-	let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
-	let repository = matchlist(logText, '^changeset:\s\+\(\S\+\)\n')[1]
-
     if statusText =~ '^C'
         let displayStatus = 'Clean'
     elseif statusText =~ '^M'
@@ -217,21 +207,31 @@ function! s:hgFunctions.GetBufferInfo()
     elseif statusText =~ '^!'
         let displayStatus = 'Missing'
     elseif statusText =~ '^?'
-        let displayStatus = 'Not Tracked'
+        let displayStatus = 'Unknown'
     elseif statusText =~ '^I'
         let displayStatus = 'Ignored'
     else
         let displayStatus = ''
     endif
 
-	if revision == ''
+	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' parents -- "' . fileName . '"')
+	let last_rev_repo = matchlist(parentsText, '^changeset:\s\+\(\d\+\):\S')[1]
+
+	let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
+	let last_rev_file_modif = matchlist(logText, '^changeset:\s\+\(\d\+\):\S')[1]
+
+
+	if last_rev_repo == ''
 		" Error
-		return ['Unknown']
+		return [displayStatus]
 	else
-		return [displayStatus, repository]
+        if last_rev_file_modif == last_rev_repo
+            return [displayStatus, last_rev_file_modif]
+        else
+            return [displayStatus, last_rev_file_modif, last_rev_repo]
+        endif
 	endif
 endfunction
-
 " Function: s:hgFunctions.Log(argList) {{{2
 function! s:hgFunctions.Log(argList)
 	if len(a:argList) == 0
