@@ -216,6 +216,8 @@ function! s:hgFunctions.GetBufferInfo()
             let displayStatus = 'Clean'
         elseif statusText =~ '^M'
             let displayStatus = 'Modified'
+        else
+            let displayStatus = ''
         endif
 
 		return [displayStatus, revision, repository]
