@@ -217,12 +217,15 @@ function! s:hgFunctions.GetBufferInfo()
 	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' log -l 1')
 	let last_rev_repo = matchlist(parentsText, '^changeset:\s\+\(\d\+\):\S')[1]
 
-	let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
-	let last_rev_file_modif = matchlist(logText, '^changeset:\s\+\(\d\+\):\S')[1]
+    if displayStatus == 'Clean' || displayStatus == 'Modified' || displayStatus == 'Removed' || displayStatus == 'Missing'
+        let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
+        let last_rev_file_modif = matchlist(logText, '^changeset:\s\+\(\d\+\):\S')[1]
+    else
+        let last_rev_file_modif = ''
+    endif
 
 
-	if last_rev_repo == ''
-		" Error
+	if last_rev_repo == '' || last_rev_file_modif == ''
 		return [displayStatus]
 	else
         if last_rev_file_modif == last_rev_repo
