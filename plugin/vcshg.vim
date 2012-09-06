@@ -214,7 +214,7 @@ function! s:hgFunctions.GetBufferInfo()
         let displayStatus = ''
     endif
 
-	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' log -l 1')
+	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' log -l 1 ' .  fnamemodify(resolve(fileName), ':p:h'))
 	let last_rev_repo = matchlist(parentsText, '^changeset:\s\+\(\d\+\):\S')[1]
 
     if displayStatus == 'Clean' || displayStatus == 'Modified' || displayStatus == 'Removed' || displayStatus == 'Missing'
