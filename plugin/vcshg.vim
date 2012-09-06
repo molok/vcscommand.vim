@@ -214,7 +214,7 @@ function! s:hgFunctions.GetBufferInfo()
         let displayStatus = ''
     endif
 
-	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' parents -- "' . fileName . '"')
+	let parentsText = s:VCSCommandUtility.system(s:Executable() . ' log -l 1')
 	let last_rev_repo = matchlist(parentsText, '^changeset:\s\+\(\d\+\):\S')[1]
 
 	let logText = s:VCSCommandUtility.system(s:Executable() . ' log -- "' . fileName . '"')
