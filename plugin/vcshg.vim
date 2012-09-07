@@ -265,6 +265,23 @@ function! s:hgFunctions.Log(argList)
 	return resultBuffer
 endfunction
 
+function! s:hgFunctions.LogAll(argList)
+	if len(a:argList) == 0
+		let options = []
+		let caption = ''
+	elseif len(a:argList) <= 2 && match(a:argList, '^-') == -1
+		let options = ['-r' . join(a:argList, ':')]
+		let caption = options[0]
+	else
+		" Pass-through
+		let options = a:argList
+		let caption = join(a:argList, ' ')
+	endif
+
+	let resultBuffer = s:DoCommand(join(['log', '-v'] + options), 'log', caption, {'isAll': 1})
+	return resultBuffer
+endfunction
+
 " Function: s:hgFunctions.Revert(argList) {{{2
 function! s:hgFunctions.Revert(argList)
 	return s:DoCommand('revert', 'revert', '', {})
@@ -290,6 +307,14 @@ function! s:hgFunctions.Status(argList)
 		let options = a:argList
 	endif
 	return s:DoCommand(join(['status'] + options, ' '), 'status', join(options, ' '), {})
+endfunction
+"
+function! s:hgFunctions.StatusAll(argList)
+	let options = ['-A', '-v']
+	if len(a:argList) != 0
+		let options = a:argList
+	endif
+	return s:DoCommand(join(['status'] + options, ' '), 'status', join(options, ' '), {'isAll': 1})
 endfunction
 
 " Function: s:hgFunctions.Update(argList) {{{2

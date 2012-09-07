@@ -1478,7 +1478,6 @@ com! -nargs=* VCSAdd call s:MarkOrigBufferForSetup(s:ExecuteVCSCommand('Add', [<
 com! -nargs=* -bang VCSAnnotate call s:VCSAnnotate(<q-bang>, <f-args>)
 com! -nargs=* -bang VCSBlame call s:VCSAnnotate(<q-bang>, <f-args>)
 com! -nargs=? -bang VCSCommit call s:VCSCommit(<q-bang>, <q-args>)
-com! -nargs=? -bang VCSCommitAll call s:VCSCommitAll(<q-bang>, <q-args>)
 com! -nargs=* VCSDelete call s:ExecuteVCSCommand('Delete', [<f-args>])
 com! -nargs=* VCSDiff call s:VCSDiff(<f-args>)
 com! -nargs=0 -bang VCSGotoOriginal call s:VCSGotoOriginal(<q-bang>)
@@ -1492,6 +1491,10 @@ com! -nargs=* VCSStatus call s:ExecuteVCSCommand('Status', [<f-args>])
 com! -nargs=* VCSUnlock call s:MarkOrigBufferForSetup(s:ExecuteVCSCommand('Unlock', [<f-args>]))
 com! -nargs=0 VCSUpdate call s:MarkOrigBufferForSetup(s:ExecuteVCSCommand('Update', []))
 com! -nargs=* VCSVimDiff call s:VCSVimDiff(<f-args>)
+
+com! -nargs=* VCSLogAll             call s:ExecuteVCSCommand('LogAll', [<f-args>])
+com! -nargs=* VCSStatusAll          call s:ExecuteVCSCommand('StatusAll', [<f-args>])
+com! -nargs=? -bang VCSCommitAll    call s:VCSCommitAll(<q-bang>, <q-args>)
 
 " Section: VCS buffer management commands {{{2
 com! VCSCommandDisableBufferSetup call VCSCommandDisableBufferSetup()
@@ -1520,6 +1523,9 @@ if !exists("no_plugin_maps")
 	nnoremap <silent> <Plug>VCSUnlock :VCSUnlock<CR>
 	nnoremap <silent> <Plug>VCSUpdate :VCSUpdate<CR>
 	nnoremap <silent> <Plug>VCSVimDiff :VCSVimDiff<CR>
+	nnoremap <silent> <Plug>VCSLogAll :VCSLogAll<CR>
+	nnoremap <silent> <Plug>VCSStatusAll :VCSStatusAll<CR>
+	nnoremap <silent> <Plug>VCSCommitAll :VCSCommitAll<CR>
 endif
 
 " Section: Default mappings {{{1
