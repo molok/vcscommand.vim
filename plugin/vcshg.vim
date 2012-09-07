@@ -134,7 +134,7 @@ endfunction
 
 function! s:hgFunctions.CommitAll(argList)
 	try
-		return s:DoCommand('commit -v -l "' . a:argList[0] . '"', 'commit all', '', {'isAll': 1})
+		return s:DoCommand('commit -v -l "' . a:argList[0] . '"', 'commit', '', {'isAll': 1})
 	catch /Version control command failed.*nothing changed/
 		echomsg 'No commit needed.'
 	endtry
