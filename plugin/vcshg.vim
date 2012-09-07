@@ -131,6 +131,16 @@ function! s:hgFunctions.Annotate(argList)
 	return s:DoCommand('blame' . options, 'annotate', caption, {})
 endfunction
 
+
+function! s:hgFunctions.CommitAll(argList)
+	try
+		return s:DoCommand('commit -v -l "' . a:argList[0] . '"', 'commit all', '', {'isAll': 1})
+	catch /Version control command failed.*nothing changed/
+		echomsg 'No commit needed.'
+	endtry
+endfunction
+
+
 " Function: s:hgFunctions.Commit(argList) {{{2
 function! s:hgFunctions.Commit(argList)
 	try
@@ -286,6 +296,11 @@ endfunction
 function! s:hgFunctions.Update(argList)
 	return s:DoCommand('update', 'update', '', {})
 endfunction
+
+function! s:hgFunctions.GetRoot(argList)
+	return substitute(s:VCSCommandUtility.system(s:Executable() . ' root'), '\n', '', 'g')
+endfunction
+
 
 " Annotate setting {{{2
 let s:hgFunctions.AnnotateSplitRegex = '\d\+: '
