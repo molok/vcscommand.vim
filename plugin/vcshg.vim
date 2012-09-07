@@ -294,3 +294,4 @@ let s:hgFunctions.AnnotateSplitRegex = '\d\+: '
 let s:VCSCommandUtility = VCSCommandRegisterModule('HG', expand('<sfile>'), s:hgFunctions, [])
 
 let &cpo = s:save_cpo
+

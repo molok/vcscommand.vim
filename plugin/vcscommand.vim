@@ -370,6 +370,7 @@ let s:isEditFileRunning = 0
 " invoked from a catch statement.
 
 function! s:ReportError(error)
+    "echo'function! s:ReportError(error)'
 	echohl WarningMsg|echomsg 'VCSCommand:  ' . a:error|echohl None
 endfunction
 
@@ -378,6 +379,7 @@ endfunction
 " command line on Windows systems.
 
 function! s:VCSCommandUtility.system(...)
+    "echo'function! s:VCSCommandUtility.system(...)'
 	if (has("win32") || has("win64")) && &sxq !~ '"'
 		let save_sxq = &sxq
 		set sxq=\"
@@ -410,6 +412,7 @@ endfunction
 " Adds the given menu item.
 
 function! s:VCSCommandUtility.addMenuItem(shortcut, command)
+    "echo'function! s:VCSCommandUtility.addMenuItem(shortcut, command)'
 	if s:menuEnabled
 	    exe 'amenu <silent> '.s:menuPriority.' '.s:menuRoot.'.'.a:shortcut.' '.a:command
 	endif
@@ -419,6 +422,7 @@ endfunction
 " Adds a dictionary containing current options to the stack.
 
 function! s:VCSCommandUtility.pushContext(context)
+    "echo'function! s:VCSCommandUtility.pushContext(context)'
 	call insert(s:executionContext, a:context)
 endfunction
 
@@ -429,9 +433,17 @@ function! s:VCSCommandUtility.popContext()
 	call remove(s:executionContext, 0)
 endfunction
 
+"echo'" Function: s:VCSCommandUtility.popContext() {{{2
+" Removes a dictionary containing current options from the stack.
+"
+" function! s:VCSCommandUtility.popContext()
+"   call remove(s:executionContext, 0)
+"   endfunction
+"   '
 " Function: s:ClearMenu() {{{2
 " Removes all VCSCommand menu items
 function! s:ClearMenu()
+    "echo'function! s:ClearMenu()'
 	if s:menuEnabled
 		execute 'aunmenu' s:menuRoot
 	endif
@@ -462,6 +474,7 @@ endfunction
 " current buffer.
 
 function! s:ExecuteExtensionMapping(mapping)
+    "echo'function! s:ExecuteExtensionMapping(mapping)'
 	let buffer = bufnr('%')
 	let vcsType = VCSCommandGetVCSType(buffer)
 	if !has_key(s:plugins, vcsType)
@@ -515,6 +528,12 @@ endfunction
 " overridden with the VCSResultBufferNameFunction variable.
 
 function! s:GenerateResultBufferName(command, originalBuffer, vcsType, statusText)
+    "echo'function! s:GenerateResultBufferName(command, originalBuffer, vcsType, statusText)'
+    "echo'command:' . a:command
+    "echo'originalBuffer:' . a:originalBuffer
+    "echo'vcsType:' . a:vcsType
+    "echo'statusText:' . a:statusText
+
 	let fileName = bufname(a:originalBuffer)
 	let bufferName = a:vcsType . ' ' . a:command
 	if strlen(a:statusText) > 0
@@ -535,6 +554,7 @@ endfunction
 " file name with the VCS type and command appended as extensions.
 
 function! s:GenerateResultBufferNameWithExtension(command, originalBuffer, vcsType, statusText)
+    "echo'function! s:GenerateResultBufferNameWithExtension(command, originalBuffer, vcsType, statusText)'
 	let fileName = bufname(a:originalBuffer)
 	let bufferName = a:vcsType . ' ' . a:command
 	if strlen(a:statusText) > 0
@@ -555,6 +575,10 @@ endfunction
 " original buffer.
 
 function! s:EditFile(command, originalBuffer, statusText)
+    "echo'function! s:EditFile(command, originalBuffer, statusText)'
+    "echo'command:' . a:command
+    "echo'originalBuffer:' . a:originalBuffer
+    "echo'statusText:' . a:statusText
 	let vcsType = getbufvar(a:originalBuffer, 'VCSCommandVCSType')
 
 	" Protect against useless buffer set-up
@@ -586,6 +610,7 @@ endfunction
 " thrown in case no type can be identified.
 
 function!  s:IdentifyVCSType(buffer)
+    "echo'function!  s:IdentifyVCSType(buffer)'
 	if exists("g:VCSCommandVCSTypeOverride")
 		let fullpath = fnamemodify(bufname(a:buffer), ':p')
 		for [path, vcsType] in g:VCSCommandVCSTypeOverride
@@ -641,6 +666,11 @@ endfunction
 " buffer.
 
 function! s:SetupScratchBuffer(command, vcsType, originalBuffer, statusText)
+    "echo'function! s:SetupScratchBuffer(command, vcsType, originalBuffer, statusText)'
+    "echo'command:' . a:command
+    "echo'vcsType:' . a:vcsType
+    "echo'originalBuffer:' . a:originalBuffer
+    "echo'statusText:' . a:statusText
 	let nameExtension = VCSCommandGetOption('VCSCommandResultBufferNameExtension', '')
 	if nameExtension == ''
 		let nameFunction = VCSCommandGetOption('VCSCommandResultBufferNameFunction', 's:GenerateResultBufferName')
@@ -700,6 +730,7 @@ endfunction
 " Returns:  The VCS buffer number in a passthrough mode.
 
 function! s:MarkOrigBufferForSetup(buffer)
+    "echo'function! s:MarkOrigBufferForSetup(buffer)'
 	checktime
 	if a:buffer > 0
 		let origBuffer = VCSCommandGetOriginalBuffer(a:buffer)
@@ -715,6 +746,7 @@ endfunction
 " Clears all current VCS output buffers of the specified type for a given source.
 
 function! s:WipeoutCommandBuffers(originalBuffer, VCSCommand)
+    "echo'function! s:WipeoutCommandBuffers(originalBuffer, VCSCommand)'
 	let buffer = 1
 	while buffer <= bufnr('$')
 		if getbufvar(buffer, 'VCSCommandOriginalBuffer') == a:originalBuffer
@@ -732,6 +764,7 @@ endfunction
 " the appropriate setting command stored with that original buffer.
 
 function! s:VimDiffRestore(vimDiffBuff)
+    "echo'function! s:VimDiffRestore(vimDiffBuff)'
 	let s:isEditFileRunning += 1
 	try
 		if exists('t:vcsCommandVimDiffSourceBuffer')
@@ -792,6 +825,7 @@ endfunction
 
 " Function: s:VCSAnnotate(...) {{{2
 function! s:VCSAnnotate(bang, ...)
+    "echo'function! s:VCSAnnotate(bang, ...)'
 	call s:VCSCommandUtility.pushContext({'VCSCommandEncodeAsFile': bufnr('%')})
 	try
 		let line = line('.')
@@ -862,6 +896,7 @@ endfunction
 
 " Function: s:VCSCommit() {{{2
 function! s:VCSCommit(bang, message)
+    "echo'function! s:VCSCommit(bang, message)'
 	try
 		let vcsType = VCSCommandGetVCSType(bufnr('%'))
 		if !has_key(s:plugins, vcsType)
@@ -905,11 +940,54 @@ function! s:VCSCommit(bang, message)
 	endtry
 endfunction
 
+
+function! s:VCSCommitAll(bang, message)
+    "echo'function! s:VCSCommitAll(bang, message)'
+	try
+		let vcsType = VCSCommandGetVCSType(bufnr('%'))
+		if !has_key(s:plugins, vcsType)
+			throw 'Unknown VCS type:  ' . vcsType
+		endif
+
+		if strlen(a:message) > 0 || a:bang == '!'
+			return s:VCSFinishCommitAll([a:message])
+		endif
+
+		let originalBuffer = VCSCommandGetOriginalBuffer(bufnr('%'))
+		call s:EditFile('commitlog', originalBuffer, '')
+		setlocal ft=vcscommit
+
+		" Create a commit mapping.
+
+		nnoremap <silent> <buffer> <Plug>VCSCommit :call <SID>VCSFinishCommitWithBufferAll()<CR>
+
+		silent 0put ='VCS: ----------------------------------------------------------------------'
+		silent put ='VCS: Please enter log message.  Lines beginning with ''VCS:'' are removed automatically.'
+		silent put ='VCS: To finish the commit, Type <leader>cc (or your own <Plug>VCSCommit mapping)'
+
+		if VCSCommandGetOption('VCSCommandCommitOnWrite', 1) == 1
+			setlocal buftype=acwrite
+			au VCSCommandCommit BufWriteCmd <buffer> call s:VCSFinishCommitWithBufferAll()
+			silent put ='VCS: or write this buffer'
+		endif
+
+		silent put ='VCS: ----------------------------------------------------------------------'
+		$
+		setlocal nomodified
+		silent do VCSCommand User VCSBufferCreated
+
+	catch
+		call s:ReportError(v:exception)
+		return -1
+	endtry
+endfunction
+
 " Function: s:VCSFinishCommitWithBuffer() {{{2
 " Wrapper for s:VCSFinishCommit which is called only from a commit log buffer
 " which removes all lines starting with 'VCS:'.
 
 function! s:VCSFinishCommitWithBuffer()
+    "echo'function! s:VCSFinishCommitWithBuffer()'
 	setlocal nomodified
 	let currentBuffer = bufnr('%')
 	let logMessageList = getbufline('%', 1, '$')
@@ -921,8 +999,22 @@ function! s:VCSFinishCommitWithBuffer()
 	return resultBuffer
 endfunction
 
+function! s:VCSFinishCommitWithBufferAll()
+    "echo'function! s:VCSFinishCommitWithBufferAll()'
+	setlocal nomodified
+	let currentBuffer = bufnr('%')
+	let logMessageList = getbufline('%', 1, '$')
+	call filter(logMessageList, 'v:val !~ ''^\s*VCS:''')
+	let resultBuffer = s:VCSFinishCommitAll(logMessageList)
+	if resultBuffer >= 0
+		execute 'bw' currentBuffer
+	endif
+	return resultBuffer
+endfunction
+
 " Function: s:VCSFinishCommit(logMessageList, originalBuffer) {{{2
 function! s:VCSFinishCommit(logMessageList, originalBuffer)
+    "echo'function! s:VCSFinishCommit(logMessageList, originalBuffer)'
 	let messageFileName = tempname()
 	if exists('*iconv') && has('multi_byte')
 		if(strlen(&tenc) && &tenc != &enc)
@@ -943,6 +1035,7 @@ endfunction
 
 " Function: s:VCSGotoOriginal(bang) {{{2
 function! s:VCSGotoOriginal(bang)
+    "echo'function! s:VCSGotoOriginal(bang)'
 	let originalBuffer = VCSCommandGetOriginalBuffer(bufnr('%'))
 	if originalBuffer > 0
 		let origWinNR = bufwinnr(originalBuffer)
@@ -965,6 +1058,7 @@ function! s:VCSGotoOriginal(bang)
 endfunction
 
 function! s:VCSDiff(...)  "{{{2
+    "echo'function! s:VCSDiff(...)  "{{{2'
 	call s:VCSCommandUtility.pushContext({'VCSCommandEncodeAsFile': bufnr('%')})
 	try
 		let resultBuffer = s:ExecuteVCSCommand('Diff', a:000)
@@ -980,6 +1074,7 @@ function! s:VCSDiff(...)  "{{{2
 endfunction
 
 function! s:VCSReview(...)  "{{{2
+    "echo'function! s:VCSReview(...)  "{{{2'
 	call s:VCSCommandUtility.pushContext({'VCSCommandEncodeAsFile': bufnr('%')})
 	try
 		let resultBuffer = s:ExecuteVCSCommand('Review', a:000)
@@ -994,6 +1089,7 @@ endfunction
 
 " Function: s:VCSVimDiff(...) {{{2
 function! s:VCSVimDiff(...)
+    "echo'function! s:VCSVimDiff(...)'
 	try
 		let vcsType = VCSCommandGetVCSType(bufnr('%'))
 		if !has_key(s:plugins, vcsType)
@@ -1131,6 +1227,7 @@ endfunction
 "   7. error if no matching types
 
 function! VCSCommandGetVCSType(buffer)
+    "echo'function! VCSCommandGetVCSType(buffer)'
 	let vcsType = VCSCommandGetOption('VCSCommandVCSTypeExplicitOverride', '')
 	if len(vcsType) == 0
 		let vcsType = getbufvar(a:buffer, 'VCSCommandVCSType')
@@ -1146,6 +1243,7 @@ endfunction
 " Changes the current directory, respecting :lcd changes.
 
 function! VCSCommandChdir(directory)
+    "echo'function! VCSCommandChdir(directory)'
 	let command = 'cd'
 	if exists("*haslocaldir") && haslocaldir()
 		let command = 'lcd'
@@ -1161,6 +1259,7 @@ endfunction
 " Go to the directory in which the given file is located.
 
 function! VCSCommandChangeToCurrentFileDir(fileName)
+    "echo'function! VCSCommandChangeToCurrentFileDir(fileName)'
 	let oldCwd = getcwd()
 	let newCwd = fnamemodify(resolve(a:fileName), ':p:h')
 	if strlen(newCwd) > 0
@@ -1174,6 +1273,7 @@ endfunction
 " for a given buffer.
 
 function! VCSCommandGetOriginalBuffer(vcsBuffer)
+    "echo'function! VCSCommandGetOriginalBuffer(vcsBuffer)'
 	let origBuffer = getbufvar(a:vcsBuffer, 'VCSCommandOriginalBuffer')
 	if origBuffer
 		if bufexists(origBuffer)
@@ -1192,6 +1292,7 @@ endfunction
 " Allows VCS modules to register themselves.
 
 function! VCSCommandRegisterModule(name, path, commandMap, mappingMap)
+    "echo'function! VCSCommandRegisterModule(name, path, commandMap, mappingMap)'
 	let s:plugins[a:name] = [a:path, a:commandMap, a:mappingMap]
 	if !empty(a:mappingMap)
 				\ && !exists("g:no_plugin_maps")
@@ -1218,10 +1319,16 @@ endfunction
 " Returns: name of the new command buffer containing the command results
 
 function! VCSCommandDoCommand(cmd, cmdName, statusText, options)
+    "echo'function! VCSCommandDoCommand(cmd, cmdName, statusText, options)'
 	let allowNonZeroExit = 0
 	if has_key(a:options, 'allowNonZeroExit')
 		let allowNonZeroExit = a:options.allowNonZeroExit
 	endif
+
+    let isAll = 0
+    if has_key(a:options, 'isAll')
+        let isAll = a:options.isAll
+    endif
 
 	let originalBuffer = VCSCommandGetOriginalBuffer(bufnr('%'))
 	if originalBuffer == -1
@@ -1229,15 +1336,24 @@ function! VCSCommandDoCommand(cmd, cmdName, statusText, options)
 	endif
 
 	let path = resolve(bufname(originalBuffer))
+    
+	" Change to the directory of the current buffer.  This is done for CVS, but
+	" is left in for other systems as it does not affect them negatively.
+
+	let oldCwd = VCSCommandChangeToCurrentFileDir(path)
 
 	" Work with netrw or other systems where a directory listing is displayed in
 	" a buffer.
 
-	if isdirectory(path)
-		let fileName = '.'
-	else
-		let fileName = fnamemodify(path, ':t')
-	endif
+    if isAll == 1
+        let fileName = s:ExecuteVCSCommand('GetRoot', a:000)
+    else
+        if isdirectory(path)
+            let fileName = '.'
+        else
+            let fileName = fnamemodify(path, ':t')
+        endif
+    endif
 
 	if match(a:cmd, '<VCSCOMMANDFILE>') > 0
 		let fullCmd = substitute(a:cmd, '<VCSCOMMANDFILE>', fileName, 'g')
@@ -1245,15 +1361,13 @@ function! VCSCommandDoCommand(cmd, cmdName, statusText, options)
 		let fullCmd = a:cmd . ' -- ' . shellescape(fileName)
 	endif
 
-	" Change to the directory of the current buffer.  This is done for CVS, but
-	" is left in for other systems as it does not affect them negatively.
 
-	let oldCwd = VCSCommandChangeToCurrentFileDir(path)
 	try
 		let output = s:VCSCommandUtility.system(fullCmd)
 	finally
 		call VCSCommandChdir(oldCwd)
 	endtry
+    
 
 	" HACK:  if line endings in the repository have been corrupted, the output
 	" of the command will be confused.
@@ -1306,6 +1420,7 @@ endfunction
 " searched in the window, buffer, then global spaces.
 
 function! VCSCommandGetOption(name, default)
+    "echo'function! VCSCommandGetOption(name, default)'
 	for context in s:executionContext
 		if has_key(context, a:name)
 			return context[a:name]
@@ -1326,6 +1441,7 @@ endfunction
 " Global function for deactivating the buffer autovariables.
 
 function! VCSCommandDisableBufferSetup()
+    "echo'function! VCSCommandDisableBufferSetup()'
 	let g:VCSCommandEnableBufferSetup = 0
 	silent! augroup! VCSCommandPlugin
 endfunction
@@ -1334,6 +1450,7 @@ endfunction
 " Global function for activating the buffer autovariables.
 
 function! VCSCommandEnableBufferSetup()
+    "echo'function! VCSCommandEnableBufferSetup()'
 	let g:VCSCommandEnableBufferSetup = 1
 	augroup VCSCommandPlugin
 		au!
@@ -1354,6 +1471,7 @@ endfunction
 " variable for how to do this).
 
 function! VCSCommandGetStatusLine()
+    "echo'function! VCSCommandGetStatusLine()'
 	if exists('b:VCSCommandCommand')
 		" This is a result buffer.  Return nothing because the buffer name
 		" contains information already.
@@ -1371,11 +1489,34 @@ function! VCSCommandGetStatusLine()
 endfunction
 
 function! VCSCommandSetVCSType(type)
+    "echo'function! VCSCommandSetVCSType(type)'
 	if exists('b:VCSCommandBufferSetup')
 		unlet b:VCSCommandBufferSetup
 	endif
 	let b:VCSCommandVCSType = a:type
 	call s:SetupBuffer()
+endfunction
+
+
+function! s:VCSFinishCommitAll(logMessageList)
+    "echo'function! s:VCSFinishCommitAll(logMessageList)'
+	let messageFileName = tempname()
+	if exists('*iconv') && has('multi_byte')
+		if(strlen(&tenc) && &tenc != &enc)
+			call map(a:logMessageList, 'iconv(v:val, &enc, &tenc)')
+		endif
+	endif
+	call writefile(a:logMessageList, messageFileName)
+	try
+		let resultBuffer = s:ExecuteVCSCommand('CommitAll', [messageFileName])
+		if resultBuffer < 0
+			return resultBuffer
+		endif
+        " TODO
+		return s:MarkOrigBufferForSetup(resultBuffer)
+	finally
+		call delete(messageFileName)
+	endtry
 endfunction
 
 " Section: Command definitions {{{1
@@ -1384,6 +1525,7 @@ com! -nargs=* VCSAdd call s:MarkOrigBufferForSetup(s:ExecuteVCSCommand('Add', [<
 com! -nargs=* -bang VCSAnnotate call s:VCSAnnotate(<q-bang>, <f-args>)
 com! -nargs=* -bang VCSBlame call s:VCSAnnotate(<q-bang>, <f-args>)
 com! -nargs=? -bang VCSCommit call s:VCSCommit(<q-bang>, <q-args>)
+com! -nargs=? -bang VCSCommitAll call s:VCSCommitAll(<q-bang>, <q-args>)
 com! -nargs=* VCSDelete call s:ExecuteVCSCommand('Delete', [<f-args>])
 com! -nargs=* VCSDiff call s:VCSDiff(<f-args>)
 com! -nargs=0 -bang VCSGotoOriginal call s:VCSGotoOriginal(<q-bang>)
@@ -1410,6 +1552,7 @@ if !exists("no_plugin_maps")
 	nnoremap <silent> <Plug>VCSAdd :VCSAdd<CR>
 	nnoremap <silent> <Plug>VCSAnnotate :VCSAnnotate<CR>
 	nnoremap <silent> <Plug>VCSCommit :VCSCommit<CR>
+	nnoremap <silent> <Plug>VCSCommitAll :VCSCommitAll<CR>
 	nnoremap <silent> <Plug>VCSDelete :VCSDelete<CR>
 	nnoremap <silent> <Plug>VCSDiff :VCSDiff<CR>
 	nnoremap <silent> <Plug>VCSGotoOriginal :VCSGotoOriginal<CR>
@@ -1500,6 +1643,7 @@ endif
 " Function: s:CloseAllResultBuffers() {{{2
 " Closes all vcscommand result buffers.
 function! s:CloseAllResultBuffers()
+    "echo'function! s:CloseAllResultBuffers()'
 	" This avoids using bufdo as that may load buffers already loaded in another
 	" vim process, resulting in an error.
 	let buffnr = 1
@@ -1524,3 +1668,4 @@ let loaded_VCSCommand = 2
 silent do VCSCommand User VCSPluginFinish
 
 let &cpo = s:save_cpo
+
