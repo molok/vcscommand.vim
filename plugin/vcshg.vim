@@ -201,6 +201,7 @@ function! s:hgFunctions.GetBufferInfo()
 	let originalBuffer = VCSCommandGetOriginalBuffer(bufnr('%'))
 	let fileName = bufname(originalBuffer)
 	let statusText = s:VCSCommandUtility.system(s:Executable() . ' status -A -- "' . fileName . '"')
+    let branch = substitute(s:VCSCommandUtility.system(s:Executable() . ' branch'), '\n', '', '')
 	if(v:shell_error)
 		return []
 	endif
@@ -224,7 +225,7 @@ function! s:hgFunctions.GetBufferInfo()
         let displayStatus = ''
     endif
 
-    return [displayStatus]
+    return ['{' . branch . '} ' . displayStatus]
 
 	"let parentsText = s:VCSCommandUtility.system(s:Executable() . ' log -l 1 ' .  fnamemodify(resolve(fileName), ':p:h'))
 	"let last_rev_repo = matchlist(parentsText, '^changeset:\s\+\(\d\+\):\S')[1]
